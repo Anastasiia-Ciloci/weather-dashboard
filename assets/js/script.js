@@ -17,14 +17,21 @@ var coordUrl = "https://api.openweathermap.org/data/2.5/onecall?";
 // var latitude = 36.845131;
 // var longitude = -75.975441;
 function getCityWeather(cityName) {
-  fetch(cityNameUrl + "q=virginia%20beach&" + appId + "&units=imperial")
+  fetch(cityNameUrl + "q=" + cityName + "&" + appId + "&units=imperial")
     .then(function (response) {
-      return response.json();
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw Error("City " + response.statusText);
+      }
     })
     .then(function (data) {
       console.log(data);
       var lon = data.coord.lon;
       var lat = data.coord.lat;
+      cityName = data.name;
+      $("#currentCity").text(cityName);
+
       fetch(
         coordUrl +
           "lat=" +
@@ -39,18 +46,47 @@ function getCityWeather(cityName) {
           return response.json();
         })
         .then(function (weatherData) {
-          console.log(weatherData);
-          console.log("todays temp is:", weatherData.current.temp);
+          //console.log(weatherData);
+          //console.log("todays temp is:", weatherData.current.temp);
           printWeather(weatherData);
+
+          var storedCities =
+            JSON.parse(localStorage.getItem("weatherData")) || [];
+          localStorage.setItem("weatherData", JSON.stringify(storedCities));
+          storedCities.add(cityName);
+
+          showSavedCities();
         })
         .catch(function (err) {
           console.log(err);
+          throw err;
         });
     })
     .catch(function (err) {
       console.log(err);
+      alert(err.message);
     });
 }
+
+var showSavedCities = function () {
+  //console.log("print saved cities");
+  var storedCities = JSON.parse(localStorage.getItem("weatherData")) || [];
+  var cityList = $("#cityList");
+  cityList.empty();
+  for (var i = 0; i < storedCities.length; i++) {
+    var cityBtn = $("<button>" + item + "</button>");
+    cityBtn.on("click", { cityName: item }, getSavedCityWeather);
+    cityList.append(cityBtn);
+  }
+  // storedCities.forEach(function (item) {
+
+  // });
+};
+
+var getSavedCityWeather = function (event) {
+  getCityWeather(event.data.cityName);
+};
+
 var printWeather = function (weatherData) {
   var currentTemp = weatherData.current.temp;
   var currentHumid = weatherData.current.humidity;
@@ -81,6 +117,9 @@ var printWeather = function (weatherData) {
 var today = moment();
 $("#currentDay").text(today.format("L"));
 
-searchBtnEl.addEventListener("click", getCityWeather);
+searchBtnEl.addEventListener("click", function () {
+  var cityName = $("#searchInput").val();
+  getCityWeather(cityName);
+});
 
-//var renderSearchedInfo = function () {};
+showSavedCities();
