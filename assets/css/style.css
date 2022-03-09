@@ -1,0 +1,51 @@
+body {
+  margin: 0;
+}
+.row {
+  margin-left: 0;
+  margin-right: 0;
+}
+header {
+  padding: 20px;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  font-size: 40px;
+  text-align: center;
+
+  background-image: linear-gradient(
+    to right,
+    rgb(0, 195, 255),
+    rgb(54, 59, 131),
+    rgb(8, 10, 31)
+  );
+
+  color: white;
+}
+#result {
+  padding: 30px;
+}
+
+#city-input {
+  font-size: 40px;
+}
+#result {
+  border: 2px solid black;
+}
+#forecastDivInfo {
+  border: 2px solid blue;
+}
+
+main p {
+  font-family: Georgia, "Times New Roman", Times, serif;
+}
+
+/*weather mode*/
+.sunny {
+  background-color: blanchedalmond;
+}
+.rainy {
+  background-color: blue;
+}
+.cloudy {
+  background-color: grey;
+}
